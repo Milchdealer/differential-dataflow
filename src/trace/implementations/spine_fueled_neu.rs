@@ -217,6 +217,9 @@ where
     }
     fn advance_frontier(&mut self) -> AntichainRef<T> { self.advance_frontier.borrow() }
     fn distinguish_since(&mut self, frontier: AntichainRef<T>) {
+        // We should never request to rewind the frontier.
+        debug_assert!(PartialOrder::less_equal(&self.through_frontier.borrow(), &frontier), "FAIL\tthrough frontier !<= new frontier {:?} {:?}\n", self.through_frontier, frontier);
+
         self.through_frontier = frontier.to_owned();
         self.consider_merges();
     }
